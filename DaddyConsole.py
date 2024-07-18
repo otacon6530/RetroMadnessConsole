@@ -17,14 +17,13 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 print("Finding Device...")
-ports = serial.tools.list_ports.comports()
 arduino = None;
-id = 0;
-timeout = 2;
-value = None;
+id = 0; 
+timeout = 1;
 verbose = True;
 state = 0;
-
+def parse(cmd):
+	print("Todo")
 def send(cmd):
 	global id 
 	id += 1
@@ -40,16 +39,19 @@ def receive():
 		if(len(raw)>0):
 			try:
 				response = json.loads(raw)
+				if(verbose):
+					print("{}VERBOSE: {}{}".format(bcolors.OKBLUE,bcolors.ENDC,response))
+				parse(response)
+				return response
 			except: 
 				print("{}ERROR: {}Unknown response ""{}""".format(bcolors.FAIL,bcolors.ENDC,raw))
 				quit()
-			if(verbose):
-				print("{}VERBOSE: {}{}".format(bcolors.OKBLUE,bcolors.ENDC,response))
-			return response
 #Handshake
+ports = serial.tools.list_ports.comports()
 for port, desc, hwid in sorted(ports):
 	try: 
-		arduino = serial.Serial(port=port, baudrate=9600, timeout=.1)
+		arduino = serial.Serial(port=port, baudrate=115200, timeout=.1)
+		send("W");
 		i = send("GD")
 		response = receive()
 		if(i==response["id"]):
@@ -66,6 +68,6 @@ for port, desc, hwid in sorted(ports):
 if(arduino==None):
 	print("{}ERROR: {}Unable to connect to device".format(bcolors.FAIL,bcolors.ENDC))
 	exit
-while state==1: 
-	receive()
+while state==1: #create a listener
+	receive();
 	
