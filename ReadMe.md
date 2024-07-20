@@ -1,0 +1,1 @@
+A computer based emulation station that provides a user experience similar to a gaming console in the 90s.
