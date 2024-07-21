@@ -5,6 +5,8 @@ import serial
 import time 
 import serial.tools.list_ports
 import json
+import tkinter as tk
+from time import sleep
 
 arduino = None;
 
@@ -86,7 +88,19 @@ def requestConnection():
 				send("GD");
 			except:
 				continue
-			
+def task():
+    # The window will stay open until this function call ends.
+    sleep(2) # Replace this with the code you want to run
+    root.destroy()
+
+window = tk.Tk();
+window.title("Retro Madness Console");
+window.attributes("-fullscreen", True);
+label = tk.Label(window, text="Loading.")
+label.pack();
+window.after(200, task);
+window.mainloop();
+
 #Create a drive listener
 while 1==1:
 	listener();
