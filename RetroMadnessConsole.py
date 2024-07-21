@@ -91,7 +91,7 @@ def requestConnection():
 def task():
     # The window will stay open until this function call ends.
     sleep(2) # Replace this with the code you want to run
-    root.destroy()
+    window.destroy()
 
 window = tk.Tk();
 window.title("Retro Madness Console");
