@@ -1,5 +1,6 @@
 # Importing Libraries 
 from os import close
+from re import S
 import serial 
 import time 
 import serial.tools.list_ports
@@ -7,36 +8,88 @@ import json
 
 arduino = None;
 
-def log(msg,level):
-	print("{}INFO: {}".format(bcolors.OKGREEN,bcolors.ENDC,response["desc"],port, desc, hwid)+msg);
+class state:
+	DEFAULT = 0;
+	CONNECTING = 1;
+	NOGAME = 2;
+
+appState = state.NOGAME;
+
+class logLevel:
+    INFO = "\033[92mINFO: \033[0m";
+    WARNING = "\033[93mWarning: \033[0m";
+    ERROR = "\033[91mError: \033[0m";
+
+def startGame(gameID):
+	print("Todo: Start Game by ID.");
+def getDescription(response):
+	global appState;
+	print("");
+	print("{}{}{}".format(logLevel.INFO,"Connected to ",response["desc"]));
+	appState = state.NOGAME;
+	send("RDY");
+def getGame(response):
+	global appState;
+	if(response["insertState"]==1):
+		appState = state.DEFAULT;
+		startGame(response["gameID"]);
+
 def send(cmd, args=()):
+	global arduino
 	x = {
 		"cmd": cmd,
 		"args":args
 	}
 	try:
+		print("{}Sending {}".format(logLevel.INFO,x));
 		arduino.write(bytes(json.dumps(x), 'utf-8'));
+			
 	except:
-		log("Error","error");
+		print("{}{}".format(logLevel.INFO,"Error"));
+		if(cmd!="GD"):#avoid loop issues
+			arduino = None;
+			requestConnection();
 	return id
-
-print("Finding Device...");
-ports = serial.tools.list_ports.comports();
-for port,  desc, hwid in sorted(ports):
-	try: 
-		arduino = serial.Serial(port=port, baudrate=115200, timeout=.1)
-		send("GD",port);
-		continue
+def listener():
+	global appState
+	global arduino
+	raw = None;
+	try:
+		raw = arduino.readline().decode("utf-8")
+		if(len(raw)>0):
+			response = json.loads(raw);
+			print("\n{}Receiving {}".format(logLevel.INFO,response));
+			if(response["cmd"]=="GD"):
+				getDescription(response);
+			if(response["cmd"]=="ISC"):
+				getGame(response);
 	except:
-		continue
+		if(appState!=state.CONNECTING):
+			print("{}{}".format(logLevel.ERROR,"Lost Connection."));
+			arduino = None;
+			requestConnection();
+			
+def requestConnection():
+	global appState;
+	global arduino;
+	if(arduino==None):
+		if(appState!=state.CONNECTING):
+			print("Connecting...", end='');
+		else:
+			print(".", end='');
+			time.sleep(1);
+		appState = state.CONNECTING;
+		ports = serial.tools.list_ports.comports();
+		for port, desc, hwid in sorted(ports):
+			try: 
+				arduino = serial.Serial(port=port, baudrate=115200, timeout=.1);
+				send("GD");
+			except:
+				continue
+			
+#Create a drive listener
+while 1==1:
+	listener();
+	if(appState==state.CONNECTING):
+		requestConnection();
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'

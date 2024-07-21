@@ -3,8 +3,8 @@ int analogPin = A0;
 int insertPin = 3;
 int gameID = 0;  // variable to store the value read
 String description= "Retro Madness Cartridge Reader v0.2";
-int state = 0;
 int insertState = 0;
+int state = 0;
 
 void setup(void) {
   pinMode(analogPin, INPUT);//floppy resistance to determin game id.
@@ -16,11 +16,8 @@ void setup(void) {
 void parse(String s){
   JsonDocument receive;
   deserializeJson(receive, s);
-  if("GD"==receive["cmd"]){sendDescription(receive);}
+  if("GD"==receive["cmd"]){sendDescription();}
   if("RDY"==receive["cmd"]){setReadyState();}
-  if("W"==receive["cmd"]){setWaitState();}
-  if("GIS"==receive["cmd"]){sendInsertState(receive);}
-  if("GG"==receive["cmd"]){sendGame(receive);}
 }
 void sendInsertState(){
         JsonDocument doc;
@@ -30,43 +27,16 @@ void sendInsertState(){
         serializeJson(doc, Serial);
         Serial.print('\n');
 }
-void sendWaitState(){
-        JsonDocument doc;
-        doc["cmd"]="W";
-        setWaitState();
-        serializeJson(doc, Serial);
-        Serial.print('\n');
-}
-void sendInsertState(JsonDocument receive){
-        JsonDocument doc;   
-        doc["cmd"]="ISC";
-        doc["id"]=receive["id"];
-        doc["insertState"]=insertState;
-        doc["gameID"]=gameID;
-        serializeJson(doc, Serial);
-        Serial.print('\n');
-}
-void sendDescription(JsonDocument receive){
+
+void sendDescription(){
         JsonDocument doc;
         doc["cmd"]="GD";
-        doc["id"]=receive["id"];
         doc["desc"]=description;
-        serializeJson(doc, Serial);
-        Serial.print('\n');
-}
-void sendGame(JsonDocument receive){
-        JsonDocument doc;
-        doc["cmd"]="GG";
-        doc["id"]=receive["id"];
-        doc["gameID"]=gameID;
         serializeJson(doc, Serial);
         Serial.print('\n');
 }
 void setReadyState(){
     state = 1;
-}
-void setWaitState(){
-    state = 0;
 }
 void loop(void) {
   //Read incoming requests
@@ -80,7 +50,6 @@ void loop(void) {
     insertState = insertVal;
     delay(1000);
     if(insertState==digitalRead(insertPin)){
-      sendWaitState();
       //Get gamecard voltage/gameID
       float reading= analogRead(analogPin);
       gameID = reading;
