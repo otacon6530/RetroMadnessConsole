@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9133fcac-59d6-4725-9d48-2d4c79031318</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>DaddyConsole.py</StartupFile>
+    <StartupFile>RetroMadnessConsole.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,6 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="RetroMadnessConsole.py" />
     <Compile Include="DaddyConsole.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
