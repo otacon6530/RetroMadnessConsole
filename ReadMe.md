@@ -1,3 +1,5 @@
+Wiki https://dev.azure.com/stephensdev/Retro%20Madness%20Console/_wiki/wikis/Retro%20Madness%20Console/34/Index
+
 A computer based emulation station that provides a user experience similar to a gaming console in the 90s.
 
 Primary Goals:
