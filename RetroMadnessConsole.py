@@ -90,7 +90,7 @@ def task():
 	while(True):
 		listener();
 		if(appState==state.CONNECTING):
-			requestConnection(); 
+			requestConnection();
 	
 requestConnection();
 window = tk.Tk();
