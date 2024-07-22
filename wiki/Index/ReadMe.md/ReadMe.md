@@ -4,4 +4,4 @@ A computer based emulation station that provides a user experience similar to a 
 
 Primary Goals:
 1. Control game selection with physical cartridges
-2. Console will have a intro splash screen, but not other controls.
+2. Console will have a intro splash screen, but not other controls. 

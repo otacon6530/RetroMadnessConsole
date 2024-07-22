@@ -28,8 +28,13 @@
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
        the BeforeBuild and AfterBuild targets below. -->
-  <!--<Target Name="CoreCompile" />-->
+  <Target Name="CoreCompile" />
   <Target Name="BeforeBuild">
+	  <Delete Files="$(SolutionDir)wiki\index\ReadMe.md" />
+	  <Copy
+            SourceFiles="$(SolutionDir)ReadMe.md"
+            DestinationFolder="$(SolutionDir)wiki\index\ReadMe.md"
+        />
   </Target>
   <Target Name="AfterBuild">
   </Target>
