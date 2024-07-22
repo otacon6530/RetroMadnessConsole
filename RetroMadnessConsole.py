@@ -90,7 +90,7 @@ def requestConnection():
 				continue
 def task():
     #Create a drive listener
-	while(1==1):
+	while(True):
 		listener();
 		if(appState==state.CONNECTING):
 			requestConnection();
