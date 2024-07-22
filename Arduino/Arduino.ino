@@ -1,12 +1,17 @@
 #include <ArduinoJson.h>
+
 int analogPin = A0; 
 int insertPin = 3;
 int gameID = 0;  // variable to store the value read
 String description= "Retro Madness Cartridge Reader v0.2";
 int insertState = 0;
 int state = 0;
+JsonDocument button;
 
 void setup(void) {
+  button["insert"]=-1;
+  button["reset"]=-1;
+  
   pinMode(analogPin, INPUT);//floppy resistance to determin game id.
   pinMode(insertPin, INPUT);//Is floppy in drive?
   Serial.begin(115200);
@@ -38,6 +43,15 @@ void sendDescription(){
 void setReadyState(){
     state = 1;
 }
+
+boolean singlePress(String event,int value){
+  if(button[event]!=value){
+    button[event]=value;
+    return true;
+  }
+  return false;
+}
+
 void loop(void) {
   //Read incoming requests
   if (Serial.available() > 0) {
@@ -46,15 +60,11 @@ void loop(void) {
   
   //Is a floppy in the drive?
   int insertVal = digitalRead(insertPin);
-  if(insertVal != insertState && state == 1){
-    insertState = insertVal;
-    delay(1000);
-    if(insertState==digitalRead(insertPin)){
+  if(singlePress("insert",insertVal) && state == 1){
       //Get gamecard voltage/gameID
       float reading= analogRead(analogPin);
       gameID = reading;
       sendInsertState();
-    }
   }
 }
 
