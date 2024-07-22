@@ -1,12 +1,9 @@
 # Importing Libraries 
-from os import close
-from re import S
 import serial 
 import time 
 import serial.tools.list_ports
 import json
 import tkinter as tk
-from time import sleep
 
 arduino = None;
 
