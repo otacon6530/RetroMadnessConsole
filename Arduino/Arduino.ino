@@ -4,6 +4,7 @@
 int analogPin = A0; 
 int insertPin = 3;
 int resetPin = 4;
+int LEDPin = 5;
 
 //Define global variables
 String description= "Retro Madness Cartridge Reader v0.2";
@@ -16,6 +17,8 @@ void setup(void) {
   pinMode(analogPin, INPUT);//floppy resistance to determin game id.
   pinMode(insertPin, INPUT);//Is floppy in drive?
   pinMode(resetPin, INPUT);//is reset button pressed?
+  pinMode(LEDPin, OUTPUT); //LED
+  digitalWrite(LEDPin, HIGH); //LED always on
   Serial.begin(115200);
 };
 
@@ -48,11 +51,15 @@ void sendDescription(){
 }
 
 void sendReset(int gameID){
+        //Blink LED on reset
+        digitalWrite(LEDPin, LOW);
         JsonDocument doc;
         doc["cmd"]="RST";
         doc["gameID"]=gameID;
         serializeJson(doc, Serial);
         Serial.print('\n');
+        delay(1000);            
+        digitalWrite(LEDPin, HIGH);
 }
 void setReadyState(){
     state = 1;
