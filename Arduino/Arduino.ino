@@ -1,10 +1,10 @@
 #include <ArduinoJson.h>
 
 //Define used pins
-int analogPin = A0; 
-int insertPin = 3;
-int resetPin = 4;
-int LEDPin = 5;
+int gameSensor = A0; 
+int cartridgeSensor = 3;
+int resetButton = 4;
+int LED = 5;
 
 //Define global variables
 String description= "Retro Madness Cartridge Reader v0.2";
@@ -14,11 +14,11 @@ JsonDocument buttonState;
 void setup(void) {
   buttonState["insert"]=-1;
   buttonState["reset"]=-1;
-  pinMode(analogPin, INPUT);//floppy resistance to determin game id.
-  pinMode(insertPin, INPUT);//Is floppy in drive?
-  pinMode(resetPin, INPUT);//is reset button pressed?
-  pinMode(LEDPin, OUTPUT); //LED
-  digitalWrite(LEDPin, HIGH); //LED always on
+  pinMode(gameSensor, INPUT);//floppy resistance to determin game id.
+  pinMode(cartridgeSensor, INPUT);//Is floppy in drive?
+  pinMode(resetButton, INPUT);//is reset button pressed?
+  pinMode(LED, OUTPUT); //LED
+  digitalWrite(LED, HIGH); //LED always on
   Serial.begin(115200);
 };
 
@@ -52,14 +52,14 @@ void sendDescription(){
 
 void sendReset(int gameID){
         //Blink LED on reset
-        digitalWrite(LEDPin, LOW);
+        digitalWrite(LED, LOW);
         JsonDocument doc;
         doc["cmd"]="RST";
         doc["gameID"]=gameID;
         serializeJson(doc, Serial);
         Serial.print('\n');
         delay(1000);            
-        digitalWrite(LEDPin, HIGH);
+        digitalWrite(LED, HIGH);
 }
 void setReadyState(){
     state = 1;
@@ -84,15 +84,15 @@ void loop(void) {
   if(state==1){
     
     //Send state of floppy within the drive only when it has changed (Inserted/Removed).
-    int insertVal = digitalRead(insertPin);
-    int gameID = analogRead(analogPin);
+    int insertVal = digitalRead(cartridgeSensor);
+    int gameID = analogRead(gameSensor);
     if(insertVal==0){gameID=-1;};
     if(singlePress("insert",insertVal)){
         sendInsertState(insertVal,gameID);
     }
 
     //Send state of reset only when it has changed from unpressed to pressed.
-    int reset = digitalRead(resetPin);
+    int reset = digitalRead(resetButton);
     if(singlePress("reset",reset)&& reset==1){
         sendReset(gameID);
     }
