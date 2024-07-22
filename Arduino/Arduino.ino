@@ -37,6 +37,9 @@ void sendInsertState(int state,int gameID){
 }
 
 void sendDescription(){
+        buttonState["insert"]=-1;
+        buttonState["reset"]=-1;
+        state=0;
         JsonDocument doc;
         doc["cmd"]="GD";
         doc["desc"]=description;
@@ -75,14 +78,16 @@ void loop(void) {
     
     //Send state of floppy within the drive only when it has changed (Inserted/Removed).
     int insertVal = digitalRead(insertPin);
+    int gameID = analogRead(analogPin);
+    if(insertVal==0){gameID=-1;};
     if(singlePress("insert",insertVal)){
-        sendInsertState(insertVal,analogRead(analogPin));
+        sendInsertState(insertVal,gameID);
     }
 
     //Send state of reset only when it has changed from unpressed to pressed.
     int reset = digitalRead(resetPin);
     if(singlePress("reset",reset)&& reset==1){
-        sendReset(analogRead(analogPin));
+        sendReset(gameID);
     }
   }
 }

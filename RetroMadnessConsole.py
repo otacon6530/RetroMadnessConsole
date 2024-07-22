@@ -89,10 +89,13 @@ def requestConnection():
 			except:
 				continue
 def task():
-    # The window will stay open until this function call ends.
-    sleep(2) # Replace this with the code you want to run
-    #window.destroy()
-
+    #Create a drive listener
+	while(1==1):
+		listener();
+		if(appState==state.CONNECTING):
+			requestConnection();
+	
+requestConnection();
 window = tk.Tk();
 window.title("Retro Madness Console");
 window.attributes("-fullscreen", True);
@@ -101,9 +104,5 @@ label.pack();
 window.after(200, task);
 window.mainloop();
 
-#Create a drive listener
-while 1==1:
-	listener();
-	if(appState==state.CONNECTING):
-		requestConnection();
+
 
